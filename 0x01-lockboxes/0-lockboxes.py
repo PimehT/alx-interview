@@ -16,20 +16,15 @@ def canUnlockAll(boxes):
     if len(boxes) == 0:
         return False
 
-    keys = set(boxes[0])
-    opened = {0}
+    opened = set()
+    to_open = [0]
 
-    next = min(keys - opened)
-    while (next < len(boxes)):
-        opened.add(next)
-        if len(boxes[next]) == 0:
-            break
-        keys = keys.union(set(boxes[next]))
-        if len(keys - opened) == 0:
-            break
-        next = min(keys - opened)
+    while to_open:
+        current = to_open.pop(0)
+        if current not in opened:
+            opened.add(current)
+            for key in boxes[current]:
+                if key not in opened and key < len(boxes):
+                    to_open.append(key)
 
-    if len(opened) == len(boxes):
-        return True
-    else:
-        return False
+    return len(opened) == len(boxes)
