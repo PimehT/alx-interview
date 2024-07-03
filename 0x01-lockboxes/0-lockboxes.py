@@ -1,3 +1,9 @@
+#!/usr/bin/python3
+"""
+A method that determines if all the boxes can be opened
+"""
+
+
 def canUnlockAll(boxes):
     """
     Determines if all the boxes can be opened
@@ -7,19 +13,20 @@ def canUnlockAll(boxes):
     True - if the keys can all the boxes
     Otherwise False
     """
-    if not boxes:
+    if len(boxes) == 0:
         return False
 
-    n = len(boxes)
-    opened = set()
-    stack = [0]
+    keys = set(boxes[0])
+    opened = {0}
 
-    while stack:
-        current_box = stack.pop()
-        if current_box not in opened:
-            opened.add(current_box)
-            for key in boxes[current_box]:
-                if key < n:
-                    stack.append(key)
+    next = min(keys - opened)
+    while (next < len(boxes)):
+        opened.add(next)
+        if len(boxes[next]) == 0:
+            break
+        keys = keys.union(set(boxes[next]))
+        if len(keys - opened) == 0:
+            break
+        next = min(keys - opened)
 
-    return len(opened) == n
+    return len(opened) == len(boxes)
