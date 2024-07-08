@@ -6,6 +6,7 @@ This repository contains projects and exercises designed to prepare for software
 
 - `0x00-pascal_triangle`: Pascal's Triangle project.
 - `0x01-lockboxes`: Lockboxes project.
+- `0x02-minimum_operations`: Minimum Operations project.
 
 ## Projects
 
@@ -16,6 +17,10 @@ This project involves generating Pascal's Triangle, a triangular array of binomi
 ### 0x01. Lockboxes
 
 This project involves determining if all the boxes in a list of locked boxes can be opened. Each box may contain keys to other boxes, and a key with the same number as a box opens that box.
+
+### 0x02. Minimum Operations
+
+This project involves calculating the fewest number of operations needed to result in exactly `n` `H` characters in a text file. The text editor can execute only two operations: `Copy All` and `Paste`.
 
 ## Author
 
