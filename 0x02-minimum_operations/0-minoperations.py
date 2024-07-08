@@ -26,7 +26,4 @@ def prime_factors(n):
 def minOperations(n):
     if n < 2:
         return 0
-    elif len(prime_factors(n)) == 1:
-        return n
-    else:
-        return sum(prime_factors(n))
+    return sum(prime_factors(n))
