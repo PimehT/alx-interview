@@ -7,6 +7,7 @@ This repository contains projects and exercises designed to prepare for software
 - `0x00-pascal_triangle`: Pascal's Triangle project.
 - `0x01-lockboxes`: Lockboxes project.
 - `0x02-minimum_operations`: Minimum Operations project.
+- `0x03-log_parsing`: Log Parsing project.
 
 ## Projects
 
@@ -21,6 +22,10 @@ This project involves determining if all the boxes in a list of locked boxes can
 ### 0x02. Minimum Operations
 
 This project involves calculating the fewest number of operations needed to result in exactly `n` `H` characters in a text file. The text editor can execute only two operations: `Copy All` and `Paste`.
+
+### 0x03. Log Parsing
+
+This project involves parsing logs from a web server and generating statistics from the logs. The logs contain information about the status of the requests made to the server.
 
 ## Author
 
