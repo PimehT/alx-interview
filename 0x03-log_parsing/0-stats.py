@@ -6,13 +6,17 @@ import sys
 
 # Initialize variables
 total_size = 0
-status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+status_codes = {
+    200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0
+}
 line_count = 0
 
 # Regex pattern to parse log lines
 log_pattern = re.compile(
-    r'(?P<ip>\d+\.\d+\.\d+\.\d+) - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+\] "GET /projects/260 HTTP/1\.1" (?P<status>\d+) (?P<size>\d+)'
+    r'(?P<ip>\d+\.\d+\.\d+\.\d+) - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+\] '
+    r'"GET /projects/260 HTTP/1\.1" (?P<status>\d+) (?P<size>\d+)'
 )
+
 
 def print_stats():
     """Prints the current statistics"""
@@ -21,10 +25,12 @@ def print_stats():
         if status_codes[code] > 0:
             print(f"{code}: {status_codes[code]}")
 
+
 def signal_handler(signum, frame):
     """Handle SIGINT (Ctrl+C)"""
     print_stats()
     sys.exit(0)
+
 
 # Register signal handler for SIGINT
 signal.signal(signal.SIGINT, signal_handler)
@@ -35,7 +41,7 @@ for line in sys.stdin:
     if match:
         size = int(match.group("size"))
         status = int(match.group("status"))
-        
+
         total_size += size
         if status in status_codes:
             status_codes[status] += 1
