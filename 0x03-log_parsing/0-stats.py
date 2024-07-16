@@ -25,24 +25,25 @@ def signal_handler(sig, frame):
 # Set up signal handler for keyboard interruption
 signal.signal(signal.SIGINT, signal_handler)
 
-for line in sys.stdin:
-    parts = line.split()
-    if len(parts) != 9:
-        continue
+if __name__ == "__main__":
+    for line in sys.stdin:
+        parts = line.split()
+        if len(parts) != 9:
+            continue
 
-    try:
-        ip, ignore1, ignore2, date, method, url, protocol, status, size = parts
-        status = int(status)
-        size = int(size)
-        if status in status_codes:
-            status_codes[status] += 1
-        total_size += size
-        line_count += 1
+        try:
+            ip, ignore1, ignore2, date, method, url, protocol, status, size = parts
+            status = int(status)
+            size = int(size)
+            if status in status_codes:
+                status_codes[status] += 1
+            total_size += size
+            line_count += 1
 
-        if line_count % 10 == 0:
-            print_stats()
-    except ValueError:
-        continue
+            if line_count % 10 == 0:
+                print_stats()
+        except ValueError:
+            continue
 
-# Print any remaining stats after the loop
-print_stats()
+    # Print any remaining stats after the loop
+    print_stats()
