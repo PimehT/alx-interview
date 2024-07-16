@@ -23,37 +23,39 @@ def print_stats(total_size, status_codes):
             print(f"{code}: {status_codes[code]}")
 
 
-try:
-    for line in sys.stdin:
-        parts = line.split()
-        if len(parts) < 9:
-            continue
+if __name__ == "__main__":
+    import sys
 
-        # Extract file size
-        try:
-            size = int(parts[-1])
-            total_size += size
-        except (IndexError, ValueError):
-            continue
+    total_size = 0
+    status_codes = {
+        200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+    line_count = 0
 
-        # Extract status code
-        try:
-            status_code = int(parts[-2])
-            if status_code in status_codes:
-                status_codes[status_code] += 1
-        except (IndexError, ValueError):
-            continue
+    try:
+        for line in sys.stdin:
+            parts = line.split()
+            if len(parts) < 9:
+                continue
 
-        line_count += 1
+            # Extract file size and status code
+            try:
+                total_size += int(parts[-1])
+                status_code = int(parts[-2])
+                if status_code in status_codes:
+                    status_codes[status_code] += 1
+            except (IndexError, ValueError):
+                continue
 
-        # Print stats every 10 lines
-        if line_count == 10:
-            print_stats(total_size, status_codes)
-            line_count = 0
+            line_count += 1
 
-    # Print any remaining stats after the loop
-    print_stats(total_size, status_codes)
+            # Print stats every 10 lines
+            if line_count == 10:
+                print_stats(total_size, status_codes)
+                line_count = 0
 
-except KeyboardInterrupt:
-    print_stats(total_size, status_codes)
-    raise
+    except KeyboardInterrupt:
+        print_stats(total_size, status_codes)
+        raise
+    else:
+        if line_count > 0:
+            print_stats(total_size, status_code)
