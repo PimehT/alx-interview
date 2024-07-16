@@ -1,56 +1,45 @@
 #!/usr/bin/python3
 """ a script that reads stdin line by line and computes metrics """
-import re
-import signal
 import sys
+import signal
 
-# Initialize variables
 total_size = 0
-status_codes = {
-    200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0
-}
+status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 line_count = 0
 
-# Regex pattern to parse log lines
-log_pattern = re.compile(
-    r'(?P<ip>\d+\.\d+\.\d+\.\d+) - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+\] '
-    r'"GET /projects/260 HTTP/1\.1" (?P<status>\d+) (?P<size>\d+)'
-)
-
-
 def print_stats():
-    """Prints the current statistics"""
+    """Prints the accumulated metrics."""
     print(f"File size: {total_size}")
-    for code in sorted(status_codes.keys()):
+    for code in sorted(status_codes):
         if status_codes[code] > 0:
             print(f"{code}: {status_codes[code]}")
 
-
-def signal_handler(signum, frame):
-    """Handle SIGINT (Ctrl+C)"""
+def signal_handler(sig, frame):
+    """Handles the keyboard interrupt signal."""
     print_stats()
     sys.exit(0)
 
-
-# Register signal handler for SIGINT
+# Set up signal handler for keyboard interruption
 signal.signal(signal.SIGINT, signal_handler)
 
-# Read lines from stdin
 for line in sys.stdin:
-    match = log_pattern.match(line)
-    if match:
-        size = int(match.group("size"))
-        status = int(match.group("status"))
-
-        total_size += size
+    parts = line.split()
+    if len(parts) != 9:
+        continue
+    
+    try:
+        ip, ignore1, ignore2, date, method, url, protocol, status, size = parts
+        status = int(status)
+        size = int(size)
         if status in status_codes:
             status_codes[status] += 1
-
+        total_size += size
         line_count += 1
 
-        # Print stats every 10 lines
         if line_count % 10 == 0:
             print_stats()
+    except ValueError:
+        continue
 
-# Print final stats if the script ends normally
+# Print any remaining stats after the loop
 print_stats()
