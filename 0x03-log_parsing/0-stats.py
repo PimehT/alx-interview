@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 """
 A script that reads stdin line by line and computes metrics:
-- Input format: <IP Address> - [<date>] "GET /projects/260 HTTP/1.1" <status code> <file size>
-- Prints statistics after every 10 lines and upon keyboard interruption (CTRL + C).
+- Input format:
+<IP Address> - [<date>] "GET /projects/260 HTTP/1.1" <status code> <file size>
+- Prints statistics after every 10 lines and upon keyboard
+interruption (CTRL + C).
 """
 import sys
 
@@ -26,14 +28,14 @@ try:
         parts = line.split()
         if len(parts) < 9:
             continue
-        
+
         # Extract file size
         try:
             size = int(parts[-1])
             total_size += size
         except (IndexError, ValueError):
             continue
-        
+
         # Extract status code
         try:
             status_code = int(parts[-2])
