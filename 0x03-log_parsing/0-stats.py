@@ -27,6 +27,13 @@ def print_stats(total_size, status_codes):
 
 try:
     for line in sys.stdin:
+        # Print stats every 10 lines
+        if line_count == 10:
+            print_stats(total_size, status_codes)
+            line_count = 1
+        else:
+            line_count += 1
+
         parts = line.split()
         if len(parts) < 9:
             continue
@@ -41,12 +48,6 @@ try:
                     status_codes[status_code] += 1
         except (IndexError, ValueError):
             continue
-
-        line_count += 1
-
-        # Print stats every 10 lines
-        if line_count % 10 == 0:
-            print_stats(total_size, status_codes)
 
     # Print any remaining stats after the loop
     print_stats(total_size, status_codes)
