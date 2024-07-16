@@ -9,7 +9,7 @@ import signal
 def print_stats(total_size, status_codes):
     """Prints the accumulated metrics."""
     print(f"File size: {total_size}")
-    for code in sorted(status_codes.keys()):
+    for code in sorted(status_codes):
         if status_codes[code] > 0:
             print(f"{code}: {status_codes[code]}")
 
@@ -20,9 +20,6 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 
-# Set up signal handler for keyboard interruption
-signal.signal(signal.SIGINT, signal_handler)
-
 if __name__ == "__main__":
     # Initialize variables
     total_size = 0
@@ -31,22 +28,39 @@ if __name__ == "__main__":
     }
     line_count = 0
 
+    # Set up signal handler for keyboard interruption
+    signal.signal(signal.SIGINT, signal_handler)
+
     try:
         for line in sys.stdin:
             parts = line.split()
-            if len(parts) < 2:
+            if len(parts) < 9:
                 continue
+
+            # Extract size and status code
             try:
-                status_code = int(parts[-2])
-                file_size = int(parts[-1])
-                if status_code in status_codes:
-                    status_codes[status_code] += 1
-                    total_size += file_size
-                    line_count += 1
-                    if line_count % 10 == 0:
-                        print_stats(total_size, status_codes)
-            except ValueError:
+                size = int(parts[-1])
+                status = int(parts[-2])
+            except (IndexError, ValueError):
                 continue
+
+            # Update total size
+            total_size += size
+
+            # Update status code count if valid
+            if status in status_codes:
+                status_codes[status] += 1
+
+            line_count += 1
+
+            # Print stats every 10 lines
+            if line_count == 10:
+                print_stats(total_size, status_codes)
+                line_count = 0
+
+        # Print any remaining stats after the loop
+        print_stats(total_size, status_codes)
+
     except KeyboardInterrupt:
         print_stats(total_size, status_codes)
-        sys.exit(0)
+        raise
