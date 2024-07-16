@@ -1,63 +1,56 @@
 #!/usr/bin/python3
+"""Reads from standard input and computes metrics.
+
+After every ten lines or the input of a keyboard interruption (CTRL + C),
+prints the following statistics:
+    - Total file size up to that point.
+    - Count of read status codes up to that point.
 """
-Adapted script to read stdin line by line and compute metrics,
-with improved input handling and error management.
-"""
-
-import sys
-
-# Initialize global variables
-total_file_size = 0
-status_code_counts = {
-    200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0
-}
-lines_processed = 0
 
 
-def report_metrics(total_file_size, status_code_counts):
-    """Report the accumulated metrics."""
-    print(f"Total File Size: {total_file_size}")
-    for status_code, count in status_code_counts.items():
-        if count > 0:
-            print(f"Status Code {status_code}: {count}")
+def display_metrics(total_size, status_count):
+    """Print accumulated metrics. """
+    print(f"File size: {total_size}")
+    for status in sorted(status_count):
+        print(f"{status}: {status_count[status]}")
 
 
-try:
-    for line in sys.stdin:
-        # Skip empty lines and lines that don't match the expected format
-        stripped_line = line.strip()
-        if not stripped_line or len(stripped_line.split()) < 9:
-            continue
+if __name__ == "__main__":
+    import sys
 
-        # Parse the line
-        parts = stripped_line.split(maxsplit=8)
-        if len(parts) < 9:
-            continue
+    total_size = 0
+    status_count = {}
+    valid_status_codes = [
+        '200', '301', '400', '401', '403', '404', '405', '500'
+    ]
+    line_counter = 0
 
-        # Extract and validate file size
-        try:
-            file_size = int(parts[-1])
-            total_file_size += file_size
-        except (IndexError, ValueError):
-            pass
+    try:
+        for line in sys.stdin:
+            if line_counter == 10:
+                display_metrics(total_size, status_count)
+                line_counter = 1
+            else:
+                line_counter += 1
 
-        # Extract and validate status code
-        try:
-            status_code = int(parts[-2])
-            if status_code in status_code_counts:
-                status_code_counts[status_code] += 1
-        except (IndexError, ValueError):
-            pass
+            parts = line.split()
 
-        lines_processed += 1
+            try:
+                total_size += int(parts[-1])
+            except (IndexError, ValueError):
+                pass
 
-        # Report stats every 10 lines
-        if lines_processed % 10 == 0:
-            report_metrics(total_file_size, status_code_counts)
+            try:
+                if parts[-2] in valid_status_codes:
+                    if status_count.get(parts[-2]) is None:
+                        status_count[parts[-2]] = 1
+                    else:
+                        status_count[parts[-2]] += 1
+            except IndexError:
+                pass
 
-    # Report final stats
-    report_metrics(total_file_size, status_code_counts)
+        display_metrics(total_size, status_count)
 
-except KeyboardInterrupt:
-    report_metrics(total_file_size, status_code_counts)
-    raise
+    except KeyboardInterrupt:
+        display_metrics(total_size, status_count)
+        raise
