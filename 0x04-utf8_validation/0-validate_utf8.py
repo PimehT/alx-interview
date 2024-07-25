@@ -1,32 +1,23 @@
 #!/usr/bin/python3
-"""Determines if a given data set represents a valid UTF-8 encoding."""
+"""UTF-8 Validation"""
 
 
 def validUTF8(data):
-    """
-    Determines if a given data set represents a valid UTF-8 encoding.
-
-    Args:
-        data (list): A list of integers representing bytes of data.
-
-    Returns:
-        bool: True if data is a valid UTF-8 encoding, else False.
-    """
+    """method determines if given data set represents a valid UTF-8 encoding"""
     num_bytes = 0
-
-    for byte in data:
+    for num in data:
+        binary_rep = format(num, '#010b')[-8:]
         if num_bytes == 0:
-            if (byte >> 5) == 0b110:
-                num_bytes = 1
-            elif (byte >> 4) == 0b1110:
-                num_bytes = 2
-            elif (byte >> 3) == 0b11110:
-                num_bytes = 3
-            elif (byte >> 7):
+            for bit in binary_rep:
+                if bit == '0':
+                    break
+                num_bytes += 1
+            if num_bytes == 0:
+                continue
+            if num_bytes == 1 or num_bytes > 4:
                 return False
         else:
-            if (byte >> 6) != 0b10:
+            if not (binary_rep[0] == '1' and binary_rep[1] == '0'):
                 return False
-            num_bytes -= 1
-
+        num_bytes -= 1
     return num_bytes == 0
