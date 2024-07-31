@@ -42,3 +42,4 @@ if __name__ == "__main__":
             print(sol)
     else:
         print('N must be at least 4\n')
+        exit(1)
