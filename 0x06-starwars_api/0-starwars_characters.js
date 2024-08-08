@@ -8,9 +8,9 @@ if (!movieId) {
   process.exit(1);
 }
 
-const apiUrl = 'https://swapi-api.alx-tools.com/api/films/';
+const apiUrl = 'https://swapi-api.hbtn.io/api/films';
 
-request(`${apiUrl}${movieId}/`, (error, response, body) => {
+request(`${apiUrl}/${movieId}/`, (error, response, body) => {
   if (error) {
     console.error('Error fetching movie details:', error);
     process.exit(1);
