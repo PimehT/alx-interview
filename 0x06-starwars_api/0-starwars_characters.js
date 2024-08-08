@@ -8,31 +8,26 @@ if (!movieId) {
   process.exit(1);
 }
 
-const apiUrl = 'https://swapi-api.hbtn.io/api/films';
+const apiUrl = 'https://swapi-api.hbtn.io/api';
 
-request(`${apiUrl}/${movieId}/`, (error, response, body) => {
+request(`${apiUrl}/films/${movieId}/`, async (error, response, body) => {
   if (error) {
-    console.error('Error fetching movie details:', error);
-    process.exit(1);
+    console.log(error);
   }
 
   const movieData = JSON.parse(body);
   const characters = movieData.characters;
 
-  if (!characters || characters.length === 0) {
-    console.log('No characters found for this movie');
-    return;
-  }
-
-  characters.forEach((characterUrl, index) => {
-    request(characterUrl, (error, response, body) => {
-      if (error) {
-        console.error('Error fetching character details:', error);
-        process.exit(1);
-      }
-
-      const characterData = JSON.parse(body);
-      console.log(characterData.name);
+  for (const character of characters) {
+    await new Promise((resolve, reject) => {
+      request(character, (error, response, body) => {
+        if (error) {
+          reject(error);
+        } else {
+          console.log(JSON.parse(body).name);
+          resolve(body);
+        }
+      });
     });
-  });
+  }
 });
