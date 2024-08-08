@@ -3,28 +3,36 @@ const request = require('request');
 
 const movieId = process.argv[2];
 
-const url = `https://swapi.dev/api/films/${movieId}/`;
+if (!movieId) {
+  console.error('Please provide a Movie ID');
+  process.exit(1);
+}
 
-request(url, (error, response, body) => {
+const apiUrl = 'https://swapi.dev/api/films/';
+
+request(`${apiUrl}${movieId}/`, (error, response, body) => {
   if (error) {
-    console.error('Error:', error);
-  } else if (response.statusCode !== 200) {
-    console.error('Status:', response.statusCode);
-  } else {
-    const film = JSON.parse(body);
-    const characters = film.characters;
-
-    characters.forEach((characterUrl) => {
-      request(characterUrl, (error, response, body) => {
-        if (error) {
-          console.error('Error:', error);
-        } else if (response.statusCode !== 200) {
-          console.error('Status:', response.statusCode);
-        } else {
-          const character = JSON.parse(body);
-          console.log(character.name);
-        }
-      });
-    });
+    console.error('Error fetching movie details:', error);
+    process.exit(1);
   }
+
+  const movieData = JSON.parse(body);
+  const characters = movieData.characters;
+
+  if (!characters || characters.length === 0) {
+    console.log('No characters found for this movie');
+    return;
+  }
+
+  characters.forEach((characterUrl, index) => {
+    request(characterUrl, (error, response, body) => {
+      if (error) {
+        console.error('Error fetching character details:', error);
+        process.exit(1);
+      }
+
+      const characterData = JSON.parse(body);
+      console.log(characterData.name);
+    });
+  });
 });
