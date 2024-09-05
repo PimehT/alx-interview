@@ -3,7 +3,10 @@
 
 
 def sieve_of_eratosthenes(max_n):
-    """ Returns a list of prime numbers up to max_n using the Sieve of Eratosthenes. """
+    """
+    Returns a list of prime numbers up to max_n
+    using the Sieve of Eratosthenes.
+    """
     is_prime = [True] * (max_n + 1)
     is_prime[0], is_prime[1] = False, False
 
